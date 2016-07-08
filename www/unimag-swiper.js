@@ -36,6 +36,10 @@ Swiper.enableLogs = function (enable, success, error) {
 	exec(success, error, 'UnimagSwiper', 'enableLogs', [enable]);
 };
 
+Swiper.enableBase64Return = function (enable, success, error) {
+	exec(success, error, 'UnimagSwiper', 'enableBase64Return', [enable]);
+};
+
 Swiper.setReaderType = function (type, success, error) {
 	var readerType = getReaderTypes()[type];
 	if (readerType) {

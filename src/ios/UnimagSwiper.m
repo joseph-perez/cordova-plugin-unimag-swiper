@@ -21,6 +21,9 @@ BOOL enableLogs = NO;
 // Type of uniMag reader
 UmReader readerType;
 
+// Base 64 return
+BOOL base64Rtn = NO;
+
 
 /***************************************************
 * LIFECYCLE
@@ -264,6 +267,28 @@ UmReader readerType;
     [self.commandDelegate sendPluginResult:result callbackId:[command callbackId]];
 }
 
+/**
+* Enabled base64 return type
+* 
+* @param {CDVInvokedUrlCommand*} command 
+*        The command sent from JavaScript
+*/
+- (void)enableBase64Return:(CDVInvokedUrlCommand*)command {
+    CDVPluginResult* result;
+
+    if ([command.arguments count] > 0) {
+        // Store preference
+        base64Rtn = (BOOL) [command.arguments objectAtIndex:0];
+        
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+            messageAsString:[NSString stringWithFormat:
+                @"Base64 return %@abled.", enableLogs ? @"en" : @"dis"]];
+    } else result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+        messageAsString:@"Boolean 'enable' not specified."];
+
+    [self.commandDelegate sendPluginResult:result callbackId:[command callbackId]];
+}
+
 
 /***************************************************
 * SDK CALLBACKS
@@ -347,11 +372,31 @@ UmReader readerType;
 - (void)umSwipeReceived:(NSNotification *)notification {    
     NSData* data = [notification object];
 
-    NSString* cardData = [[NSString alloc] 
+    // Parse card data
+		NSString* parsedCardData = nil;
+		// Base64
+		if (base64Rtn)
+		{
+			NSError *error = NULL;
+			NSString *cardData = [data base64EncodedStringWithOptions:0];
+			NSDictionary* jsonDict = [[NSDictionary alloc] initWithObjectsAndKeys:
+																cardData, @"enc_track_data",
+																nil];
+
+			parsedCardData = [[NSString alloc] initWithData:
+																	[NSJSONSerialization dataWithJSONObject:jsonDict
+																																	options:0
+																																		error:&error]
+																											 encoding:NSUTF8StringEncoding];
+		}
+		// Normal processing
+		else
+		{
+			NSString* cardData = [[NSString alloc] 
         initWithData:data 
         encoding:NSASCIIStringEncoding];
-
-    NSString* parsedCardData = [self parseCardData:cardData];
+			parsedCardData = [self parseCardData:cardData];
+		}
 
     if (parsedCardData) {
         [self fireEvent:@"swipe_success" withData:parsedCardData];

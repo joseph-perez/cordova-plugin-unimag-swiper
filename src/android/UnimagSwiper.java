@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import android.util.Base64;
 import org.json.JSONObject;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -61,6 +62,9 @@ public class UnimagSwiper extends CordovaPlugin implements uniMagReaderMsg {
 
     // Stores user preference, default false
     private boolean enableLogs = false;
+    
+    // Base 64 return, default false
+    private boolean base64Rtn = false;
 
     // Indicates if Auto Config process is running
     private boolean autoConfigRunning = false;
@@ -155,6 +159,10 @@ public class UnimagSwiper extends CordovaPlugin implements uniMagReaderMsg {
             if (args.length() > 0) {
                 setReaderType(callbackContext, args.getString(0));
             } else callbackContext.error("Reader type not specified.");
+        } else if ("enableBase64Return".equals(action)) {
+            if (args.length() > 0) {
+                enableBase64Return(callbackContext, args.getBoolean(0));
+            } else callbackContext.error("Boolean 'enable' not specified.");
         } else if ("autoConfig".equals(action)) {
             autoConfig(callbackContext);
         } else {
@@ -309,6 +317,20 @@ public class UnimagSwiper extends CordovaPlugin implements uniMagReaderMsg {
             callbackContext.error("Reader type '" + type + "' invalid.");
         }
     }
+    
+    /**
+    * Turns Base64 return on or off.
+    * 
+    * @param callbackContext 
+    *        Used when calling back into JavaScript
+    * @param enabled
+    *        True if return should be Base64 of card data
+    */
+    private void enableBase64Return(final CallbackContext callbackContext, boolean enabled) {
+        // Store preference
+        base64Rtn = enabled;
+        callbackContext.success("Base64 return " + (base64Rtn ? "en" : "dis") + "abled.");
+    }
 
     /** 
      * Starts Auto Config process to find a profile that can be 
@@ -409,7 +431,25 @@ public class UnimagSwiper extends CordovaPlugin implements uniMagReaderMsg {
     public void onReceiveMsgCardData(byte flagOfCardData, byte[] cardData) {
         cancelSwipe();
 
-        JSONObject card = parseCardData(new String(cardData));
+        // Parse card data
+        JSONObject card = null;
+        // Base64
+		if (base64Rtn)
+        {
+            try
+            {
+                card = new JSONObject();
+                String base64 = Base64.encodeToString(cardData, Base64.NO_WRAP);
+                card.put("enc_track_data", base64);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                card = null;
+            }
+        }
+        // Normal processing
+		else
+            card = parseCardData(new String(cardData));
+        
         if (card != null) {
             fireEvent("swipe_success", card.toString());   
         } else fireEvent("swipe_error");

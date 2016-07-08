@@ -13,4 +13,6 @@
 
 - (void)setReaderType:(CDVInvokedUrlCommand*)command;
 
+- (void)enableBase64Return:(CDVInvokedUrlCommand*)command;
+
 @end
