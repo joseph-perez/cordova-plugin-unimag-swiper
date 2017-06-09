@@ -60,6 +60,11 @@
                 <param name="ios-package" value="UnimagSwiper" />
             </feature>
         </config-file>
+    
+   <!-- Declare Microphone Usage for iOS10+ -->
+   <config-file parent="NSMicrophoneUsageDescription" target="*-Info.plist">
+			    <string>For Credit Card Swiping</string>
+   </config-file>
 
 		<source-file src="src/ios/IDTECH_UniMag.a" framework="true" />
 
