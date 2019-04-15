@@ -1,0 +1,19 @@
+{
+  "name": "cordova-plugin-unimag-swiper",
+  "version": "1.0.0",
+  "description": "Cordova Unimag-Swiper Plugin =================================",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joseph-perez/cordova-plugin-unimag-swiper.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/joseph-perez/cordova-plugin-unimag-swiper/issues"
+  },
+  "homepage": "https://github.com/joseph-perez/cordova-plugin-unimag-swiper#readme"
+}
