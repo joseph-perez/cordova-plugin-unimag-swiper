@@ -1,5 +1,5 @@
 {
-  "name": "cordova-plugin-unimag-swiper",
+  "name": "com.wodify.cordova.plugin.unimag-swiper",
   "version": "1.0.0",
   "description": "Cordova Unimag-Swiper Plugin =================================",
   "main": "index.js",
