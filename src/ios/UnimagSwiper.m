@@ -106,7 +106,7 @@ BOOL base64Rtn = NO;
 
             reader = [[uniMag alloc] init];
             [reader setAutoConnect:YES];
-            [reader setSwipeTimeoutDuration:30];
+            [reader setSwipeTimeoutDuration:10];
             [reader setAutoAdjustVolume:TRUE];
 
             // Set type if possible
